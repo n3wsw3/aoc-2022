@@ -14,7 +14,7 @@ jobs:
               with:
                   userId: 1007744
                   sessionCookie: ${{ secrets.AOC_SESSION }}
-                  year: 2021
+                  year: 2022
             - uses: stefanzweifel/git-auto-commit-action@v4
               with:
                   commit_message: "update readme progess"
