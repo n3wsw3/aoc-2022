@@ -1,11 +1,11 @@
+use itertools::Itertools;
+
 pub fn part_one(input: &str) -> Option<u32> {
     input.split("\n\n").map(|elf| elf.lines().map(|n| n.parse::<u32>().unwrap()).sum()).max()
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-    let mut x = input.split("\n\n").map(|elf| elf.lines().map(|n| n.parse::<u32>().unwrap()).sum()).collect::<Vec<u32>>();
-    x.sort();
-    Some(x.iter().rev().take(3).sum::<u32>())
+    Some(input.split("\n\n").map(|elf| elf.lines().map(|n| n.parse::<u32>().unwrap()).sum::<u32>()).sorted().rev().take(3).sum())
 }
 
 fn main() {
