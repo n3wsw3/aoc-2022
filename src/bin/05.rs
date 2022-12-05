@@ -37,14 +37,14 @@ fn parse_stacks(input: &str) -> Vec<Vec<char>> {
   .collect_vec()
 }
 
-fn parse_instructions(input: &str) -> Vec<(u32, u32, u32)> {
+fn parse_instructions(input: &str) -> Vec<(usize, usize, usize)> {
   input
     .lines()
     .map(|line| {
       line
         .split(' ')
-        .filter_map(|i| i.parse::<u32>().ok())
-        .collect_tuple::<(u32, u32, u32)>()
+        .filter_map(|i| i.parse().ok())
+        .collect_tuple::<(usize, usize, usize)>()
         .unwrap()
     })
     .collect_vec()
@@ -66,8 +66,8 @@ pub fn part_one(input: &str) -> Option<String> {
   let mut stacks = parse_stacks(stacks_input);
   parse_instructions(instructions_input).into_iter().for_each(|(amount, from, to)| {
     for _ in 0..amount {
-      let value = stacks.get_mut(from as usize - 1).unwrap().pop().unwrap();
-      stacks.get_mut(to as usize - 1).unwrap().push(value)
+      let value = stacks.get_mut(from - 1).unwrap().pop().unwrap();
+      stacks.get_mut(to - 1).unwrap().push(value)
     }
   });
 
@@ -78,8 +78,8 @@ pub fn part_two(input: &str) -> Option<String> {
   let (stacks_input, instructions_input) = input.split("\n\n").collect_tuple().unwrap();
   let mut stacks = parse_stacks(stacks_input);
   parse_instructions(instructions_input).into_iter().for_each(|(amount, from, to)| {
-    let mut value = last_n(stacks.get_mut(from as usize - 1).unwrap(), amount as usize);
-    stacks.get_mut(to as usize - 1).unwrap().append(&mut value)
+    let mut value = last_n(stacks.get_mut(from - 1).unwrap(), amount);
+    stacks.get_mut(to - 1).unwrap().append(&mut value)
   });
   
   Some(stacks.into_iter().filter_map(|stack| stack.last().cloned()).collect())
