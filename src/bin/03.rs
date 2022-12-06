@@ -3,7 +3,7 @@ use std::collections::HashSet;
 pub fn part_one(input: &str) -> Option<u32> {
   Some(
     input
-      .split("\n")
+      .split('\n')
       .map(|line| {
         let (first, last) = line.split_at(line.len() / 2);
 
@@ -32,12 +32,12 @@ pub fn part_two(input: &str) -> Option<u32> {
   // combine every three lines from input.split("\n")
   Some(
     input
-      .split("\n")
+      .split('\n')
       .collect::<Vec<&str>>()
       .chunks(3)
       .map(|chunk| {
         let set = chunk
-          .into_iter()
+          .iter()
           .map(|backpacks| backpacks.chars().collect::<HashSet<char>>())
           .reduce(|acc, hs| {
             let x = acc.intersection(&hs).cloned().collect();
@@ -47,7 +47,7 @@ pub fn part_two(input: &str) -> Option<u32> {
           .into_iter()
           .collect::<Vec<char>>();
         set
-          .get(0)
+          .first()
           .map(|c| {
             if c.is_lowercase() {
               (c.to_ascii_uppercase() as u32) - 64

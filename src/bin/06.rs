@@ -1,11 +1,11 @@
-use std::collections::HashSet;
 use itertools::Itertools;
+use std::collections::HashSet;
 
 fn solution(input: &str, window_size: usize) -> usize {
   input
     .as_bytes()
     .windows(window_size)
-    .map(|x| x.into_iter().collect::<HashSet<_>>().len())
+    .map(|x| x.iter().collect::<HashSet<_>>().len())
     .find_position(|x| *x == window_size)
     .unwrap()
     .0

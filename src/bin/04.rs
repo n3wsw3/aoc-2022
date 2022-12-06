@@ -2,7 +2,7 @@ use itertools::Itertools;
 
 fn parse_sections(value: &str) -> (u32, u32) {
   value
-    .split("-")
+    .split('-')
     .map(|val| val.parse::<u32>().unwrap())
     .collect_tuple()
     .unwrap()
@@ -10,12 +10,12 @@ fn parse_sections(value: &str) -> (u32, u32) {
 
 fn parse_pairs(input: &str) -> Vec<((u32, u32), (u32, u32))> {
   input
-    .split("\n")
+    .split('\n')
     .into_iter()
-    .map(|line| line.split(",").collect_vec())
+    .map(|line| line.split(',').collect_vec())
     .map(|x| {
       x.into_iter()
-        .map(|y| parse_sections(y))
+        .map(parse_sections)
         .collect_tuple::<(_, _)>()
         .unwrap()
     })
@@ -30,7 +30,7 @@ pub fn part_one(input: &str) -> Option<u32> {
   Some(
     parse_pairs(input)
       .into_iter()
-      .map(|(first, last)| if section_contains(first, last) { 1 } else { 0 })
+      .map(|(first, last)| u32::from(section_contains(first, last)))
       .sum(),
   )
 }
@@ -43,7 +43,7 @@ pub fn part_two(input: &str) -> Option<u32> {
   Some(
     parse_pairs(input)
       .into_iter()
-      .map(|(first, last)| if section_contains2(first, last) { 1 } else { 0 })
+      .map(|(first, last)| u32::from(section_contains2(first, last)))
       .sum(),
   )
 }

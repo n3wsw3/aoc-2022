@@ -27,7 +27,7 @@ fn parse_stacks(input: &str) -> Vec<Vec<char>> {
   transpose(
     input
       .lines()
-      .filter(|line| line.contains("["))
+      .filter(|line| line.contains('['))
       .map(parse_stack_line)
       .rev()
       .collect_vec(),

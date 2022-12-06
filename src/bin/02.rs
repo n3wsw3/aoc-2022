@@ -9,17 +9,17 @@ fn result(hand: u32, other: u32) -> u32 {
 }
 
 fn char_offset(str: &str, char: char) -> u32 {
-  str.chars().nth(0).unwrap() as u32 - char as u32
+  str.chars().next().unwrap() as u32 - char as u32
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
   Some(
     input
       .lines()
-      .map(|line| line.split(" ").collect::<Vec<&str>>())
+      .map(|line| line.split(' ').collect::<Vec<&str>>())
       .map(|val| {
         let hand = char_offset(val.get(1).unwrap(), 'X');
-        let other = char_offset(val.get(0).unwrap(), 'A');
+        let other = char_offset(val.first().unwrap(), 'A');
 
         result(hand, other) + hand + 1
       })
@@ -31,10 +31,10 @@ pub fn part_two(input: &str) -> Option<u32> {
   Some(
     input
       .lines()
-      .map(|line| line.split(" ").collect::<Vec<&str>>())
+      .map(|line| line.split(' ').collect::<Vec<&str>>())
       .map(|val| {
         let win_or_lose = char_offset(val.get(1).unwrap(), 'X');
-        let other = char_offset(val.get(0).unwrap(), 'A');
+        let other = char_offset(val.first().unwrap(), 'A');
 
         let hand = BEATS[((other + win_or_lose) % BEATS.len() as u32) as usize];
 
