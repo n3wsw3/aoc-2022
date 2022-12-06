@@ -33,12 +33,12 @@ mod tests {
   #[test]
   fn test_part_one() {
     let input = advent_of_code::read_file("examples", 6);
-    assert_eq!(part_one(&input), Some(5));
+    input.split('\n').map(|line| line.split(' ').collect_tuple().unwrap()).for_each(|(i, answer, _)| assert_eq!(part_one(i), answer.parse().ok()));
   }
 
   #[test]
   fn test_part_two() {
     let input = advent_of_code::read_file("examples", 6);
-    assert_eq!(part_two(&input), Some(23));
+    input.split('\n').map(|line| line.split(' ').collect_tuple().unwrap()).for_each(|(i, _, answer)| assert_eq!(part_two(i), answer.parse().ok()));
   }
 }
