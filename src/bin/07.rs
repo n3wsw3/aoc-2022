@@ -1,6 +1,5 @@
-use std::collections::HashMap;
-
 use itertools::Itertools;
+use std::collections::HashMap;
 
 #[derive(PartialEq)]
 enum NodeType {
@@ -33,84 +32,78 @@ impl Node {
       .values()
       .filter(|node| node.node_type == NodeType::Directory)
       .map(|node| {
-        let mut x = vec![node];
-        x.append(&mut node.get_dirs());
-        x
+        let mut dirs = node.get_dirs();
+        dirs.push(node);
+        dirs
       })
       .concat()
   }
 }
 
-fn solve(node: &Node) -> u32 {
-  if node.node_type == NodeType::File {
-    return 0;
-  };
-
-  let node_size = node.size();
-
-  let mut child_size: u32 = 0;
-  for c in node.children.values() {
-    child_size += solve(c);
+fn traverse<'a>(root: &'a mut Node, path: &Vec<&str>) -> &'a mut Node {
+  let mut x: &'a mut Node = root;
+  for p in path {
+    x = x.children.get_mut(p.to_owned()).unwrap();
   }
 
-  (if node_size <= 100000 { node_size } else { 0 }) + child_size
+  x
 }
 
 fn parse(input: &str) -> Node {
   let mut root: Node = Node::new(NodeType::Directory, 0);
-
   let mut path: Vec<&str> = Vec::new();
-  fn current<'a>(root: &'a mut Node, path: &Vec<&str>) -> &'a mut Node {
-    let mut x: &'a mut Node = root;
-    for p in path {
-      x = x.children.get_mut(p.to_owned()).unwrap();
-    }
 
-    x
-  }
+  for (start, command) in input.lines().map(|line| line.split_once(' ').unwrap()) {
+    let node = traverse(&mut root, &path);
 
-  for (start, end) in input.lines().map(|line| line.split_once(' ').unwrap()) {
-    let cur = current(&mut root, &path);
-    if start == "$" {
-      // Command
-      if end != "ls" {
-        let (_, place) = end.split_once(' ').unwrap();
+    match start {
+      "$" => {
+        if command != "ls" {
+          let (_, place) = command.split_once(' ').unwrap();
 
-        if place == "/" {
-          path = Vec::new();
-          continue;
-        } else if place == ".." {
-          path.pop();
-          continue;
+          match place {
+            "/" => {
+              path = Vec::new();
+            }
+            ".." => {
+              path.pop();
+            }
+            _ => {
+              if !node.children.contains_key(place) {
+                node
+                  .children
+                  .insert(place.to_string(), Node::new(NodeType::Directory, 0));
+              }
+              path.push(place);
+            }
+          }
         }
-
-        if !cur.children.contains_key(place) {
-          cur
-            .children
-            .insert(place.to_string(), Node::new(NodeType::Directory, 0));
-        }
-        path.push(place);
       }
-    } else if start == "dir" {
-      // directory
-      cur
-        .children
-        .insert(end.to_string(), Node::new(NodeType::Directory, 0));
-    } else {
-      // file
-      cur.children.insert(
-        end.to_string(),
-        Node::new(NodeType::File, start.parse::<u32>().unwrap()),
-      );
+      "dir" => {
+        node
+          .children
+          .insert(command.to_string(), Node::new(NodeType::Directory, 0));
+      }
+      _ => {
+        node.children.insert(
+          command.to_string(),
+          Node::new(NodeType::File, start.parse::<u32>().unwrap()),
+        );
+      }
     }
   }
   root
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-  let root = parse(input);
-
-  Some(solve(&root))
+  Some(
+    parse(input)
+      .get_dirs()
+      .into_iter()
+      .map(|node| node.size())
+      .filter(|node_size| node_size <= &100000)
+      .sum(),
+  )
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
