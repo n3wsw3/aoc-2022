@@ -61,7 +61,7 @@ Every [solution](https://github.com/fspoettel/advent-of-code-rust/blob/main/src/
 
 When editing a solution, `rust-analyzer` will display buttons for running / debugging unit tests above the unit test blocks.
 
-### Download input for a day
+### Download input & description for a day
 
 > **Note**  
 > This command requires [installing the aoc-cli crate](#download-puzzle-inputs-via-aoc-cli).
@@ -71,18 +71,20 @@ When editing a solution, `rust-analyzer` will display buttons for running / debu
 cargo download <day>
 
 # output:
-# Downloading input with aoc-cli...
-# Loaded session cookie from "/home/felix/.adventofcode.session".
-# Downloading input for day 1, 2021...
-# Saving puzzle input to "/tmp/tmp.MBdcAdL9Iw/input"...
+# Loaded session cookie from "/Users/<snip>/.adventofcode.session".
+# Fetching puzzle for day 1, 2022...
+# Saving puzzle description to "src/puzzles/01.md"...
+# Downloading input for day 1, 2022...
+# Saving puzzle input to "src/inputs/01.txt"...
 # Done!
 # ---
-# 🎄 Successfully wrote input to "src/inputs/01.txt"!
+# 🎄 Successfully wrote input to "src/inputs/01.txt".
+# 🎄 Successfully wrote puzzle to "src/puzzles/01.md".
 ```
 
 To download inputs for previous years, append the `--year/-y` flag. _(example: `cargo download 1 --year 2020`)_
 
-Puzzle inputs are not checked into git. [Reasoning](https://old.reddit.com/r/adventofcode/comments/k99rod/sharing_input_data_were_we_requested_not_to/gf2ukkf/?context=3).
+Puzzle descriptions are stored in `src/puzzles` as markdown files. Puzzle inputs are not checked into git. [Reasoning](https://old.reddit.com/r/adventofcode/comments/k99rod/sharing_input_data_were_we_requested_not_to/gf2ukkf/?context=3).
 
 ### Run solutions for a day
 
@@ -136,6 +138,8 @@ _Total timing_ is computed from individual solution _timings_ and excludes as mu
 cargo test
 ```
 
+To run tests for a specific day, append `--bin <day>`, e.g. `cargo test --bin 01`. You can further scope it down to a specific part, e.g. `cargo test --bin 01 part_one`.
+
 ### Format code
 
 ```sh
@@ -148,14 +152,35 @@ cargo fmt
 cargo clippy
 ```
 
+### Read puzzle description in terminal
+
+> **Note**  
+> This command requires [installing the aoc-cli crate](#download-puzzle-inputs-via-aoc-cli).
+
+```sh
+# example: `cargo read 1`
+cargo read <day>
+
+# output:
+# Loaded session cookie from "/Users/<snip>/.adventofcode.session".
+# Fetching puzzle for day 1, 2022...
+# ...the input...
+```
+
+To read inputs for previous years, append the `--year/-y` flag. _(example: `cargo read 1 --year 2020`)_
+
 ## Optional template features
 
 ### Download puzzle inputs via aoc-cli
 
-1. Install [`aoc-cli`](https://github.com/scarvalhojr/aoc-cli/) via cargo: `cargo install aoc-cli --version 0.5.0`.
+1. Install [`aoc-cli`](https://github.com/scarvalhojr/aoc-cli/) via cargo: `cargo install aoc-cli --version 0.7.0`
 2. Create an `.adventofcode.session` file in your home directory and paste your session cookie[^1] into it. To get this, press F12 anywhere on the Advent of Code website to open your browser developer tools. Look in your Cookies under the Application or Storage tab, and copy out the `session` cookie value.
 
 Once installed, you can use the [download command](#download-input-for-a-day).
+
+### Check code formatting in CI
+
+Uncomment the `format` job in the `ci.yml` workflow to enable fmt checks in CI.
 
 ### Enable clippy lints in CI
 
@@ -179,6 +204,8 @@ Go to the _Secrets_ tab in your repository settings and create the following sec
 -   `AOC_USER_ID`: Go to [this page](https://adventofcode.com/settings) and copy your user id. It's the number behind the `#` symbol in the first name option. Example: `3031`
 -   `AOC_YEAR`: the year you want to track. Example: `2021`
 -   `AOC_SESSION`: an active session[^2] for the advent of code website. To get this, press F12 anywhere on the Advent of Code website to open your browser developer tools. Look in your Cookies under the Application or Storage tab, and copy out the `session` cookie.
+
+✨ You can now run this action manually via the _Run workflow_ button on the workflow page. If you want the workflow to run automatically, uncomment the `schedule` section in the `readme-stars.yml` workflow file or add a `push` trigger.
 
 ### Use VS Code to debug your code
 
