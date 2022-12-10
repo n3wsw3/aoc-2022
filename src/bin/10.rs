@@ -34,7 +34,7 @@ pub fn part_two(input: &str) -> Option<String> {
   Some(
     solve(input, (1, 1, vec![]), |(x, pc, mut vals), op| {
       let y = i32::abs(((pc - 1) % 40) - x);
-      vals.push(if y <= 1 { '#' } else { '.' });
+      vals.push(if y <= 1 { '█' } else { ' ' });
 
       (x + op, pc + 1, vals)
     })
@@ -67,6 +67,6 @@ mod tests {
   #[test]
   fn test_part_two() {
     let input = advent_of_code::read_file("examples", 10);
-    assert_eq!(part_two(&input), Some("##..##..##..##..##..##..##..##..##..##..\n###...###...###...###...###...###...###.\n####....####....####....####....####....\n#####.....#####.....#####.....#####.....\n######......######......######......####\n#######.......#######.......#######.....".to_string()));
+    assert_eq!(part_two(&input), Some("██  ██  ██  ██  ██  ██  ██  ██  ██  ██  \n███   ███   ███   ███   ███   ███   ███ \n████    ████    ████    ████    ████    \n█████     █████     █████     █████     \n██████      ██████      ██████      ████\n███████       ███████       ███████     ".to_string()));
   }
 }
