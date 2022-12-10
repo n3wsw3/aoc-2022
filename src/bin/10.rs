@@ -31,21 +31,24 @@ pub fn part_one(input: &str) -> Option<i32> {
 }
 
 pub fn part_two(input: &str) -> Option<String> {
-  Some(
-    solve(input, (1, 1, vec![]), |(x, pc, mut vals), op| {
-      let y = i32::abs(((pc - 1) % 40) - x);
-      vals.push(if y <= 1 { '█' } else { ' ' });
+  #[allow(unstable_name_collisions)]
+  {
+    Some(
+      solve(input, (1, 1, vec![]), |(x, pc, mut vals), op| {
+        let y = i32::abs(((pc - 1) % 40) - x);
+        vals.push(if y <= 1 { '█' } else { ' ' });
 
-      (x + op, pc + 1, vals)
-    })
-    .chunks(40)
-    .into_iter()
-    .intersperse(&vec!['\n'].to_vec())
-    .map(|l| l.to_owned())
-    .concat()
-    .iter()
-    .collect::<String>(),
-  )
+        (x + op, pc + 1, vals)
+      })
+      .chunks(40)
+      .into_iter()
+      .intersperse(&vec!['\n'].to_vec())
+      .map(|l| l.to_owned())
+      .concat()
+      .iter()
+      .collect::<String>(),
+    )
+  }
 }
 
 fn main() {
