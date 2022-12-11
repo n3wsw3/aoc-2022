@@ -70,7 +70,7 @@ fn solve(input: &str, loop_count: u32, divide_by: u64) -> u64 {
       while let Some(item) = monkeys[i].items.pop_front() {
         let item = (monkeys[i].apply_op(item) % mod_to_rule_them_all) / divide_by;
 
-        let throw_to = monkeys[i].throw_to[usize::from(item % monkeys[i].test == 0)] as usize;
+        let throw_to = monkeys[i].throw_to[usize::from(item % monkeys[i].test == 0)];
 
         monkeys[throw_to].items.push_back(item);
         monkeys[i].items_handeled += 1;
