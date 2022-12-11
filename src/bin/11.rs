@@ -96,14 +96,9 @@ where
       }
     }
   }
-  let x = monkeys
-    .iter()
-    .map(|m| m.items_handeled)
-    .sorted()
-    .rev()
-    .take(2)
-    .collect_vec();
-  x.first().unwrap() * x.get(1).unwrap()
+  monkeys.sort_by(|a, b| Size::cmp(&a.items_handeled, &b.items_handeled));
+  monkeys.reverse();
+  monkeys.first().unwrap().items_handeled * monkeys.get(1).unwrap().items_handeled
 }
 
 pub fn part_one(input: &str) -> Option<Size> {
