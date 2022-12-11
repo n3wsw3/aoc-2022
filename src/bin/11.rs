@@ -1,20 +1,18 @@
 use itertools::Itertools;
 use std::collections::VecDeque;
 
-type Size = u64;
-
 enum Op {
-  Add(Size),
-  Multiply(Size),
+  Add(u64),
+  Multiply(u64),
   Square,
 }
 
 struct Monkey {
-  items: VecDeque<Size>,
+  items: VecDeque<u64>,
   op: Op,
-  test: Size,
-  throw_to: Vec<u32>,
-  items_handeled: Size,
+  test: u64,
+  throw_to: Vec<usize>,
+  items_handeled: u64,
 }
 
 impl Monkey {
@@ -41,7 +39,7 @@ impl Monkey {
         _ => {
           items = line[16..]
             .split(", ")
-            .map(|v| v.parse::<Size>().unwrap())
+            .map(|v| v.parse::<u64>().unwrap())
             .collect()
         }
       }
@@ -54,63 +52,46 @@ impl Monkey {
       items_handeled: 0,
     }
   }
+  fn apply_op(&self, item: u64) -> u64 {
+    match self.op {
+      Op::Multiply(v) => item * v,
+      Op::Add(v) => item + v,
+      Op::Square => item * item,
+    }
+  }
 }
 
-fn solve<F>(input: &str, loop_count: u32, f: F) -> Size
-where
-  F: Fn(&mut Size, Size),
-{
-  let mut mod_to_rule_them_all: Size = 1;
+fn solve(input: &str, loop_count: u32, divide_by: u64) -> u64 {
   let mut monkeys = input.split("\n\n").map(Monkey::from_str).collect_vec();
-  for monke in &monkeys {
-    mod_to_rule_them_all *= monke.test;
-  }
+  let mod_to_rule_them_all: u64 = monkeys.iter().map(|m| m.test).product();
+
   for _ in 0..loop_count {
     for i in 0..monkeys.len() {
-      let (first, rest) = monkeys.split_at_mut(i);
-      let (monke, rest) = rest.split_first_mut().unwrap();
-      while let Some(item) = monke.items.pop_front() {
-        let mut item = match monke.op {
-          Op::Multiply(v) => item * v,
-          Op::Add(v) => item + v,
-          Op::Square => item * item,
-        };
+      while let Some(item) = monkeys[i].items.pop_front() {
+        let item = (monkeys[i].apply_op(item) % mod_to_rule_them_all) / divide_by;
 
-        f(&mut item, mod_to_rule_them_all);
+        let throw_to = monkeys[i].throw_to[usize::from(item % monkeys[i].test == 0)] as usize;
 
-        let test = usize::from(item % monke.test == 0);
-        let throw_to = *monke.throw_to.get(test).unwrap() as usize;
-
-        if throw_to < i {
-          first.get_mut(throw_to).unwrap().items.push_back(item);
-        } else {
-          rest
-            .get_mut(throw_to - i - 1)
-            .unwrap()
-            .items
-            .push_back(item);
-        }
-
-        monke.items_handeled += 1;
+        monkeys[throw_to].items.push_back(item);
+        monkeys[i].items_handeled += 1;
       }
     }
   }
-  monkeys.sort_by(|a, b| Size::cmp(&a.items_handeled, &b.items_handeled));
-  monkeys.reverse();
-  monkeys.first().unwrap().items_handeled * monkeys.get(1).unwrap().items_handeled
+  monkeys
+    .iter()
+    .map(|m| m.items_handeled)
+    .sorted()
+    .rev()
+    .take(2)
+    .product()
 }
 
-pub fn part_one(input: &str) -> Option<Size> {
-  Some(solve(input, 20, |item, mod_num| {
-    *item %= mod_num;
-    *item /= 3;
-  }))
+pub fn part_one(input: &str) -> Option<u64> {
+  Some(solve(input, 20, 3))
 }
 
-pub fn part_two(input: &str) -> Option<Size> {
-  Some(solve(input, 10000, |item, mod_num| {
-    *item %= mod_num;
-  }))
+pub fn part_two(input: &str) -> Option<u64> {
+  Some(solve(input, 10000, 1))
 }
 
 fn main() {
