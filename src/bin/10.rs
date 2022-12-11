@@ -1,13 +1,12 @@
 use itertools::Itertools;
 
-fn solve<C: PartialEq + std::cmp::Ord, F>(input: &str, init: (i32, i32, Vec<C>), f: F) -> Vec<C>
+fn parse<C, F>(input: &str, init: (i32, i32, Vec<C>), f: F) -> Vec<C>
 where
   F: FnMut((i32, i32, Vec<C>), &i32) -> (i32, i32, Vec<C>),
 {
   input
     .lines()
     .map(|op| match *op.split(' ').collect_vec() {
-      ["noop"] => vec![0],
       ["addx", v] => vec![0, v.parse::<i32>().unwrap()],
       _ => vec![0],
     })
@@ -19,7 +18,7 @@ where
 
 pub fn part_one(input: &str) -> Option<i32> {
   Some(
-    solve(input, (1, 1, vec![]), |(x, pc, mut vals), op| {
+    parse(input, (1, 1, vec![]), |(x, pc, mut vals), op| {
       if pc % 40 == 20 {
         vals.push(x * pc);
       }
@@ -30,25 +29,45 @@ pub fn part_one(input: &str) -> Option<i32> {
   )
 }
 
-pub fn part_two(input: &str) -> Option<String> {
-  #[allow(unstable_name_collisions)]
-  {
-    Some(
-      solve(input, (1, 1, vec![]), |(x, pc, mut vals), op| {
-        let y = i32::abs(((pc - 1) % 40) - x);
-        vals.push(if y <= 1 { '█' } else { ' ' });
+fn do_op(x: &mut i32, pc: &mut i32, val: i32, output: &mut [Vec<char>], width: usize) {
+  let distance = i32::abs(((*pc - 1) % 40) - *x);
+    if distance < 2 {
+      *output
+        .get_mut((*pc as usize - 1) / width)
+        .unwrap()
+        .get_mut((*pc as usize - 1) % width)
+        .unwrap() = '█';
+    }
+    *x += val;
+    *pc += 1;
+}
 
-        (x + op, pc + 1, vals)
-      })
-      .chunks(40)
-      .into_iter()
-      .intersperse(&vec!['\n'].to_vec())
-      .map(|l| l.to_owned())
-      .concat()
-      .iter()
-      .collect::<String>(),
-    )
+pub fn part_two(input: &str) -> Option<String> {
+  let width = 40;
+  let height = 6;
+  let mut output = vec![vec![' '; width]; height];
+  let mut x = 1;
+  let mut pc = 1;
+
+  for line in input.lines() {
+    let val = match *line.split(' ').collect_vec() {
+      ["addx", v] => {
+        v.parse::<i32>().unwrap()
+      }
+      _ => 0,
+    };
+    do_op(&mut x, &mut pc, 0, &mut output, width);
+    if val != 0 {
+      do_op(&mut x, &mut pc, val, &mut output, width);
+    }
   }
+
+  Some(
+    output
+      .iter()
+      .map(|l| l.iter().collect::<String>())
+      .join("\n"),
+  )
 }
 
 fn main() {
