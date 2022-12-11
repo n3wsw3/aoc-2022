@@ -31,15 +31,15 @@ pub fn part_one(input: &str) -> Option<i32> {
 
 fn do_op(x: &mut i32, pc: &mut i32, val: i32, output: &mut [Vec<char>], width: usize) {
   let distance = i32::abs(((*pc - 1) % 40) - *x);
-    if distance < 2 {
-      *output
-        .get_mut((*pc as usize - 1) / width)
-        .unwrap()
-        .get_mut((*pc as usize - 1) % width)
-        .unwrap() = '█';
-    }
-    *x += val;
-    *pc += 1;
+  if distance < 2 {
+    *output
+      .get_mut((*pc as usize - 1) / width)
+      .unwrap()
+      .get_mut((*pc as usize - 1) % width)
+      .unwrap() = '█';
+  }
+  *x += val;
+  *pc += 1;
 }
 
 pub fn part_two(input: &str) -> Option<String> {
@@ -51,9 +51,7 @@ pub fn part_two(input: &str) -> Option<String> {
 
   for line in input.lines() {
     let val = match *line.split(' ').collect_vec() {
-      ["addx", v] => {
-        v.parse::<i32>().unwrap()
-      }
+      ["addx", v] => v.parse::<i32>().unwrap(),
       _ => 0,
     };
     do_op(&mut x, &mut pc, 0, &mut output, width);
