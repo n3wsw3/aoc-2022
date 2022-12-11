@@ -1,5 +1,5 @@
-use std::collections::VecDeque;
 use itertools::Itertools;
+use std::collections::VecDeque;
 
 type Size = u64;
 
@@ -27,7 +27,7 @@ impl Monkey {
     let mut items = VecDeque::new();
     for line in lines {
       match *line.split(' ').collect_vec() {
-        ["Monkey", _] => {},
+        ["Monkey", _] => {}
         ["Operation:", "new", "=", "old", "*", "old"] => op = Op::Square,
         ["Operation:", "new", "=", "old", op_type, val] => match op_type {
           "*" => op = Op::Multiply(val.parse().unwrap()),
@@ -56,7 +56,10 @@ impl Monkey {
   }
 }
 
-fn solve<F>(input: &str, loop_count: u32, f: F) -> Size where F: Fn(&mut Size, Size) {
+fn solve<F>(input: &str, loop_count: u32, f: F) -> Size
+where
+  F: Fn(&mut Size, Size),
+{
   let mut mod_to_rule_them_all: Size = 1;
   let mut monkeys = input.split("\n\n").map(Monkey::from_str).collect_vec();
   for monke in &monkeys {
@@ -73,7 +76,6 @@ fn solve<F>(input: &str, loop_count: u32, f: F) -> Size where F: Fn(&mut Size, S
           Op::Add(v) => item + v,
           Op::Square => item * item,
         };
-        
 
         f(&mut item, mod_to_rule_them_all);
 
@@ -83,14 +85,24 @@ fn solve<F>(input: &str, loop_count: u32, f: F) -> Size where F: Fn(&mut Size, S
         if throw_to < i {
           first.get_mut(throw_to).unwrap().items.push_back(item);
         } else {
-          rest.get_mut(throw_to - i - 1).unwrap().items.push_back(item);
+          rest
+            .get_mut(throw_to - i - 1)
+            .unwrap()
+            .items
+            .push_back(item);
         }
 
         monke.items_handeled += 1;
       }
     }
   }
-  let x = monkeys.iter().map(|m| m.items_handeled).sorted().rev().take(2).collect_vec();
+  let x = monkeys
+    .iter()
+    .map(|m| m.items_handeled)
+    .sorted()
+    .rev()
+    .take(2)
+    .collect_vec();
   x.first().unwrap() * x.get(1).unwrap()
 }
 
