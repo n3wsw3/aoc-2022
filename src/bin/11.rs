@@ -69,8 +69,7 @@ where
     for i in 0..monkeys.len() {
       let (first, rest) = monkeys.split_at_mut(i);
       let (monke, rest) = rest.split_first_mut().unwrap();
-      while !monke.items.is_empty() {
-        let item = monke.items.pop_front().unwrap();
+      while let Some(item) = monke.items.pop_front() {
         let mut item = match monke.op {
           Op::Multiply(v) => item * v,
           Op::Add(v) => item + v,
