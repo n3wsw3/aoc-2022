@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 use itertools::Itertools;
 
-type Size = u128;
+type Size = u64;
 
 enum Op {
   Add(Size),
@@ -12,9 +12,9 @@ enum Op {
 struct Monkey {
   items: VecDeque<Size>,
   op: Op,
-  test: u32,
+  test: Size,
   throw_to: Vec<u32>,
-  items_handeled: u32,
+  items_handeled: Size,
 }
 
 impl Monkey {
@@ -56,11 +56,11 @@ impl Monkey {
   }
 }
 
-pub fn part_one(input: &str) -> Option<u32> {
+pub fn part_one(input: &str) -> Option<Size> {
   let mut mod_to_rule_them_all: Size = 1;
   let mut monkeys = input.split("\n\n").map(Monkey::from_str).collect_vec();
   for monke in &monkeys {
-    mod_to_rule_them_all *= monke.test as Size;
+    mod_to_rule_them_all *= monke.test;
   }
   for _ in 0..20 {
     for i in 0..monkeys.len() {
@@ -77,7 +77,7 @@ pub fn part_one(input: &str) -> Option<u32> {
         item %= mod_to_rule_them_all;
         item /= 3;
 
-        let test = usize::from(item % monke.test as Size == 0);
+        let test = usize::from(item % monke.test == 0);
         let throw_to = *monke.throw_to.get(test).unwrap() as usize;
 
         if throw_to < i {
@@ -90,14 +90,15 @@ pub fn part_one(input: &str) -> Option<u32> {
       }
     }
   }
-  Some(monkeys.iter().map(|m| m.items_handeled).sorted().rev().take(2).product())
+  let x = monkeys.iter().map(|m| m.items_handeled).sorted().rev().take(2).collect_vec();
+  Some(x.first().unwrap() * x.get(1).unwrap())
 }
 
-pub fn part_two(input: &str) -> Option<u64> {
+pub fn part_two(input: &str) -> Option<Size> {
   let mut mod_to_rule_them_all: Size = 1;
   let mut monkeys = input.split("\n\n").map(Monkey::from_str).collect_vec();
   for monke in &monkeys {
-    mod_to_rule_them_all *= monke.test as Size;
+    mod_to_rule_them_all *= monke.test;
   }
   for _ in 0..10000 {
     for i in 0..monkeys.len() {
@@ -113,7 +114,7 @@ pub fn part_two(input: &str) -> Option<u64> {
         
         item %= mod_to_rule_them_all;
 
-        let test = usize::from(item % monke.test as Size == 0);
+        let test = usize::from(item % monke.test == 0);
         let throw_to = *monke.throw_to.get(test).unwrap() as usize;
 
         if throw_to < i {
@@ -126,7 +127,7 @@ pub fn part_two(input: &str) -> Option<u64> {
       }
     }
   }
-  let x = monkeys.iter().map(|m| m.items_handeled as u64).sorted().rev().take(2).collect_vec();
+  let x = monkeys.iter().map(|m| m.items_handeled).sorted().rev().take(2).collect_vec();
   Some(x.first().unwrap() * x.get(1).unwrap())
 }
 
