@@ -94,7 +94,7 @@ where
       };
     }
     let current_steps = match steps_to_pos[i][j] {
-      Visit::NotVisited => u32::MAX,
+      Visit::NotVisited => u32::MAX - 1,
       Visit::StepsNeeded(x) => x,
     };
     let current_elevation = elevations.heights[i][j] as i32;
