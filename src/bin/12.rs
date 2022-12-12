@@ -55,16 +55,13 @@ fn parse(input: &str) -> (ElevationMap, usize, usize) {
   (elevations, size_x, size_y)
 }
 
-#[derive(Debug, PartialEq)]
-enum Condition {
-  EndToStart,
-  EndToLowest,
-}
-
-fn search_until_condition(
+fn search_until_condition<F>(
   (elevations, size_x, size_y): (ElevationMap, usize, usize),
-  condition: Condition,
-) -> Option<u32> {
+  condition: F,
+) -> Option<u32>
+where
+  F: Fn((usize, usize), &ElevationMap) -> bool,
+{
   let neighbours = |i: usize, j: usize| -> Vec<(usize, usize)> {
     let mut n = Vec::new();
     if i > 0 {
@@ -90,9 +87,7 @@ fn search_until_condition(
   positions.push_back(elevations.end);
 
   while let Some((i, j)) = positions.pop_front() {
-    if (condition == Condition::EndToStart && (i, j) == elevations.start)
-      || (condition == Condition::EndToLowest && elevations.heights[i][j] == 0)
-    {
+    if condition((i, j), &elevations) {
       return match steps_to_pos[i][j] {
         Visit::NotVisited => None,
         Visit::StepsNeeded(x) => Some(x),
@@ -118,11 +113,11 @@ fn search_until_condition(
 }
 
 pub fn part_one(input: &str) -> Option<u32> {
-  search_until_condition(parse(input), Condition::EndToStart)
+  search_until_condition(parse(input), |pos, map| pos == map.start)
 }
 
 pub fn part_two(input: &str) -> Option<u32> {
-  search_until_condition(parse(input), Condition::EndToLowest)
+  search_until_condition(parse(input), |(i, j), map| map.heights[i][j] == 0)
 }
 
 fn main() {
