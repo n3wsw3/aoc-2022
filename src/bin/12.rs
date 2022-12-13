@@ -90,8 +90,7 @@ where
     for (new_i, new_j) in neighbours(i, j) {
       let next_elevation = elevations.heights[new_i][new_j] as i32;
 
-      if steps_to_pos[new_i][new_j].is_none() && current_elevation - next_elevation <= 1
-      {
+      if steps_to_pos[new_i][new_j].is_none() && current_elevation - next_elevation <= 1 {
         steps_to_pos[new_i][new_j] = Some(current_steps + 1);
         positions.push_back((new_i, new_j));
       }
