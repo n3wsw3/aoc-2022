@@ -17,12 +17,6 @@ impl AsNumber for char {
   }
 }
 
-#[derive(Debug, Clone, PartialEq)]
-enum Visit {
-  StepsNeeded(u32),
-  NotVisited,
-}
-
 fn parse(input: &str) -> (ElevationMap, usize, usize) {
   let mut elevations = ElevationMap {
     start: (0, 0),
@@ -80,31 +74,25 @@ where
   };
 
   // Steps needed to reach each position
-  let mut steps_to_pos = vec![vec![Visit::NotVisited; size_y]; size_x];
-  steps_to_pos[elevations.end.0][elevations.end.1] = Visit::StepsNeeded(0);
+  let mut steps_to_pos = vec![vec![None; size_y]; size_x];
+  steps_to_pos[elevations.end.0][elevations.end.1] = Some(0);
 
   let mut positions = VecDeque::new();
   positions.push_back(elevations.end);
 
   while let Some((i, j)) = positions.pop_front() {
     if condition((i, j), &elevations) {
-      return match steps_to_pos[i][j] {
-        Visit::NotVisited => None,
-        Visit::StepsNeeded(x) => Some(x),
-      };
+      return steps_to_pos[i][j];
     }
-    let current_steps = match steps_to_pos[i][j] {
-      Visit::NotVisited => u32::MAX - 1,
-      Visit::StepsNeeded(x) => x,
-    };
+    let current_steps = steps_to_pos[i][j].unwrap_or(u32::MAX - 1);
     let current_elevation = elevations.heights[i][j] as i32;
 
     for (new_i, new_j) in neighbours(i, j) {
       let next_elevation = elevations.heights[new_i][new_j] as i32;
 
-      if steps_to_pos[new_i][new_j] == Visit::NotVisited && current_elevation - next_elevation <= 1
+      if steps_to_pos[new_i][new_j].is_none() && current_elevation - next_elevation <= 1
       {
-        steps_to_pos[new_i][new_j] = Visit::StepsNeeded(current_steps + 1);
+        steps_to_pos[new_i][new_j] = Some(current_steps + 1);
         positions.push_back((new_i, new_j));
       }
     }
