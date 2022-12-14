@@ -1,5 +1,3 @@
-use std::fmt;
-
 use itertools::Itertools;
 
 type Coord = (i32, i32);
@@ -30,36 +28,10 @@ enum Fill {
   Rock,
 }
 
-impl fmt::Display for Fill {
-  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(
-      f,
-      "{}",
-      match self {
-        Fill::Air => ' ',
-        Fill::Rock => '#',
-        Fill::Sand => 'o',
-      }
-    )
-  }
-}
-
 #[derive(Debug)]
 struct Map {
   map: Vec<Vec<Fill>>,
   start: Coord,
-}
-
-impl fmt::Display for Map {
-  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    for y in 0..self.map[0].len() {
-      for x in 0..self.map.len() {
-        write!(f, "{}", self.map[x][y]).ok();
-      }
-      writeln!(f).ok();
-    }
-    write!(f, "")
-  }
 }
 
 impl Map {
