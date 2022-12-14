@@ -50,7 +50,8 @@ impl Map {
 
     let mut map = vec![vec![Fill::Air; size_y as usize]; size_x as usize];
 
-    lines
+    // Create all lines
+    for (x, y) in lines
       .iter()
       .map(|line| {
         line
@@ -72,12 +73,14 @@ impl Map {
           .concat()
       })
       .concat()
-      .iter()
-      .for_each(|(x, y)| map[(*x - offset_x) as usize][*y as usize] = Fill::Rock);
+    {
+      map[(x - offset_x) as usize][y as usize] = Fill::Rock;
+    }
 
-    (0..size_x)
-      .map(|xs| (xs, size_y - 1))
-      .for_each(|(x, y)| map[x as usize][y as usize] = Fill::Rock);
+    // Create lower platform
+    for xs in 0..size_x {
+      map[xs as usize][size_y as usize - 1] = Fill::Rock
+    }
 
     Map {
       map,
